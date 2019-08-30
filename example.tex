@@ -6,8 +6,7 @@
 %%%% Original design from Mike Morrison
 %%%% https://twitter.com/mikemorrison
 
-\documentclass[a0paper,fleqn]{betterposter}
-
+\documentclass[a1paper,fleqn]{betterposter}
 %%%% Uncomment the following commands to customise the format
 
 %% Setting the width of columns
@@ -24,13 +23,13 @@
 % Horizontal margin for the main column
 %\setlength{\maincolumnmarginvertical}{0.15\paperheight}
 % Vertical margin for the main column
-%\setlength{\maincolumnmarginhorizontal}{0.15\paperheight}
+\setlength{\maincolumnmarginhorizontal}{0.04\paperheight}
 
 %% Changing font sizes
 % Text font
 %\renewcommand{\fontsizestandard}{\fontsize{28}{35} \selectfont}
 % Main column font
-%\renewcommand{\fontsizemain}{\fontsize{28}{35} \selectfont}
+\renewcommand{\fontsizemain}{\fontsize{80.00}{120.00} \selectfont}
 % Title font
 %\renewcommand{\fontsizetitle}{\fontsize{28}{35} \selectfont}
 % Author font
@@ -48,30 +47,35 @@
 % Font of side columns
 %\renewcommand{\columnfontcolor}{gray}
 % Background of main column
-%\renewcommand{\maincolumnbackgroundcolor}{empirical}
+\renewcommand{\maincolumnbackgroundcolor}{empirical}
 %\renewcommand{\maincolumnbackgroundcolor}{theory}
 %\renewcommand{\maincolumnbackgroundcolor}{methods}
 %\renewcommand{\maincolumnbackgroundcolor}{intervention}
 % Font of main column
 %\renewcommand{\maincolumnfontcolor}{gray}
 
-\begin{document}	
+\begin{document}
 \betterposter{
 %%%%%%%% MAIN COLUMN
 
 \maincolumn{
 %%%% Main space
 
-\textbf{Main finding} goes here,
-\\translated into \textbf{plain English}.
-\\\textbf{Emphasize} the important words.
+\begin{flushleft}
+Does
+\textbf{purely functional programming} offer benefits 
+for the
+\textbf{design} and \textbf{implementation} of
+\textbf{distributed stream-processing} systems?
+\end{flushleft}
+
 }{
 %%%% Bottom space
 
 %% QR code
 \qrcode{img/qrcode}{img/smartphoneWhite}{
-\textbf{Take a picture} to
-\\download the full paper
+\textbf{Take a picture} to read more
+\\at the STrIoT.org website
 }
 % Smartphone icon
 % Author: Freepik
@@ -88,36 +92,34 @@
 }{
 %%%%%%%% LEFT COLUMN
 
-\title{The Title}
-\author{Mike Morrison}
-\author{Rafael Bailo}
-\institution{Optional Institution Under Name}
+\title{StrIoT}
+\author{Jonathan Dowland}
+\institution{Newcastle University}
 
-\section{Introduction}
-Here is an itemised list:
-\begin{itemize}
-\item The first item.
-\item The second item.
-\item The third item.
-\end{itemize}
+{\color{gray}\textit{Supervisor: Paul Watson}}
 
-\section{A Diagram}
-Here is a diagram:
+Many modern applications require timely processing of data arriving at high
+speed (e.g. IoT domains) and may also need to meet requirements of:
+reliability; security; energy efficiency (e.g. prolong sensor battery life) or
+privacy.
+
+In combination these make the design and management of solutions very challenging.
+
+We are exploring whether declarative, purely-functional programming can
+produce more efficient deployments than traditional approaches. 
+
+\section{StrIoT Architecture}
+\textit{Paul Watson, Andrey Mokhov}
 \begin{center}
-% Linear regression
-% Author: Henri Menke
-% Retrieved from: http://www.texample.net/tikz/examples/linear-regression/
-\includegraphics[width=\textwidth]{img/tikzexample1}
+\includegraphics[width=\textwidth]{img/draft_paper_diagram}
 \end{center}
 
-\section{Fundamental Theorem\\of Calculus}
-If $f$ is continuous on the closed interval $[a,b]$ and $F$ is the indefinite integral of $f$ on $[a,b]$, then
-\begin{equation}
-\int_a^b f(x)\,\mathrm{d}x = F(b)-F(a).
-\end{equation}
+\section{Logical Optimisation}
 
-\section{Conclusion}
-This is a great poster format!
+I'm focussing on logical optimisation:
+rewriting a stream-processing program to
+better meet non-functional requirements whilst preserving its functional
+definition.
 
 %% This fills the space between the content and the logo
 \vfill
@@ -128,20 +130,56 @@ This is a great poster format!
 }{
 %%%%%%%% RIGHT COLUMN
 
-Here you can add \textbf{supplementary material}. For instance, a new diagram:
+\section{Work completed}
+
+\begin{itemize}
+    \item Designed and built prototype stream-processing system
+        that accepts a stream-processing definition, partitions
+        it into separate programs for deployment via Docker
+
+    \item Derived 24 stream rewrite rules
+        for use in logical optimisation
+
+\end{itemize}
+
+\section{Example rewrite}
+
+Input stream-graph:
+
 \begin{center}
-% Commutative diagram with edges passing under/over
-% Author: Stefan Kottwitz, http://texblog.net/
-% Retrieved from: http://www.texample.net/tikz/examples/commutative-diagram/
-\includegraphics[width=\textwidth]{img/tikzexample2}
+% this is coming out at approx a4 size so should be legible
+\includegraphics[width=\textwidth]{img/before}
 \end{center}
 
-Some cute ducklings:
+Apply rewrites:
+
+\[
+\begin{aligned}
+filter\ a\ \cdot\ filter\ b\ =
+\\    filter\ (\lambda\ x \rightarrow\ a\ x\ \&\&\ b\ x)
+\end{aligned}
+\]
+
+\[
+    filter\ p\ \cdot\ map\ f\ =\ map\ f\ \cdot\ filter\ (p\ \cdot\ f)
+\] 
+
+Result:
+
 \begin{center}
-% Picture of ducklings
-% Author: Magda Ehlers, https://www.pexels.com/@magda-ehlers-pexels
-% Retrieved from: https://www.pexels.com/photo/selective-focus-photo-of-flock-of-ducklings-perching-on-gray-concrete-pavement-1300355/
-\includegraphics[width=\textwidth]{img/ducklings}
+\includegraphics[width=\textwidth]{img/after}
 \end{center}
+
+\section{Next Steps}
+
+\begin{itemize}
+    \item Evaluation of stream representations
+    \item Build Logical Optimiser (including a cost model for evaluating )
+    \item Automatic stream partitioning
+\end{itemize}
+
+\vfill
+\author{jon.dowland@ncl.ac.uk}
+
 }
 \end{document}
